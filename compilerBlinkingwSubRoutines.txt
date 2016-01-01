@@ -1,0 +1,41 @@
+movw r1, 0x0000
+movt r1, 0x3F20
+add  r5, r1, 0x10
+LDR  r2, r5
+movt r2, 0x20
+STR  r2, r5
+movw r13, 0x8000
+
+start:
+BL turnonlight:
+movt r0, 0x0040
+push! r13, r0
+BL subroutine:
+pop! r13, r0
+
+BL turnofflight:
+movt r0, 0x0010
+push! r13, r0
+BL subroutine:
+pop! r13, r0
+
+BAL  start:
+
+subroutine:
+ldr r7, r13
+mov r4, r7
+subs r4, r4, 0x1
+BNE -3
+MOV r15, r14
+
+turnonlight:
+add  r6, r1, 0x20
+movw r3, 0x8000
+STR  r3, r6
+mov r15, r14
+
+turnofflight:
+add  r6, r1, 0x2C
+movw r3, 0x8000
+STR  r3, r6
+mov r15, r14

@@ -1,0 +1,19 @@
+movw r1, 0x0000
+movt r1, 0x3F20
+add  r5, r1, 0x10
+LDR  r2, r5
+movt r2, 0x20
+STR  r2, r5
+add  r6, r1, 0x20
+movw r3, 0x8000
+STR  r3, r6
+movt r4, 0x0001
+subs r4, r4, 0x1
+BNE  -3
+add  r6, r1, 0x2C
+movw r3, 0x8000
+STR  r3, r6
+movt r4, 0x0001
+subs r4, r4, 0x1
+BNE  -3
+BAL  -14

@@ -1,0 +1,72 @@
+psuedo --
+set pin 47 to be output pin by:
+GPIO register at location 0x3F200010 set to 0x200000 -- sets to output
+write 0x8000 to location 0x3F200020 -- turns on light
+BAL -2 or 0xFFFFFFFE -- to loop forever
+
+legit --
+load register 1 with 0x3F200000
+load register 2 with data from register one plus 0x10
+add 0x200000 to the data in register 2 and save to register 2
+save register 2 data back out to register 1 plus 0x10
+load register 3 with data from register one plus 0x20
+add 0x8000 to register 3 and save to register 3
+write out the data in register 3 to register 1 plus 0x2C
+branch back two lines with BAL 0xFFFFFFFE
+
+assembly --
+movw r1, 0x0000
+movt r1, 0x3F20
+add  r5, r1, 0x10
+LDR  r2, r5
+ORR  r2, r2, 0x200000
+STR  r2, r5
+
+add  r6, r1, 0x20
+LDR  r3, r6
+ORR  r3, r3, 0x8000
+STR  r3, r6
+B    -2
+
+machine --
+1110 0011 0000 0000 0001 0000 0000 0000 movw
+1110 0011 0100 0011 0001 1111 0010 0000 movt
+1110 0010 1000 0001 0101 0000 0001 0000 add
+1110 0100 0001 0101 0010 0000 0000 0000 ldr
+1110 0011 1000 0010 0010 1000 0010 0000 orr
+1110 0100 0000 0101 0010 0000 0000 0000 str
+
+1110 0010 1000 0001 0110 0000 0010 0000 add
+1110 0100 0001 0110 0011 0000 0000 0000 ldr
+1110 0011 1000 0011 0011 1100 1000 0000 orr
+1110 0100 0000 0110 0011 0000 0000 0000 str
+1110 1010 1111 1111 1111 1111 1111 1110 B
+
+
+hex --
+E3 00 10 00
+E3 43 1F 20
+E2 81 50 10
+E4 15 20 00
+E3 82 28 20
+E4 05 20 00
+
+E2 81 60 20
+E4 16 30 00
+E3 83 3C 80
+E4 06 30 00
+EC FF FF FE
+
+reverse --
+00 10 00 E3
+20 1F 43 E3
+10 50 81 E2
+00 20 15 E4
+20 28 82 E3
+00 20 05 E4
+
+20 60 81 E2
+00 30 16 E4
+80 3C 83 E3
+00 30 06 E4
+FE FF FF EC

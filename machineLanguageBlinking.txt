@@ -1,0 +1,125 @@
+legit --
+load register 1 with 0x3F200000
+load register 2 with data from register one plus 0x10
+orr 0x200000 to the data in register 2 and save to register
+save register 2 data back out to register 1 plus 0x10
+load register 3 with data from register one plus 0x20
+orr 0x8000 to register 3 and save to register
+write out the data in register 3 to register 1 plus 0x20
+move a large number into register 4
+subtract 1 from register 4 and save in register 4
+branch back to the subtract conditional on if it is 0
+load register 6 with data from register 1 plus 0x2C
+orr 0x8000 with register 6 and save register
+save register 6 to register 5 address
+move a large number into register 4
+subtract 1 from register 4 and save in register 4
+branch back to turning light on conditional if it is 0
+
+assembly --
+movw r1, 0x0000
+movt r1, 0x3F20
+add  r5, r1, 0x10
+LDR  r2, r5
+ORR  r2, r2, 0x200000
+STR  r2, r5
+
+add  r6, r1, 0x20
+LDR  r3, r6
+ORR  r3, r3, 0x8000
+STR  r3, r6
+
+movt r4, 0x01000000
+subs r4, r4, 0x1
+B    -3 -- if it isn't 0
+
+add  r6, r1, 0x2C
+LDR  r3, r6
+ORR  r3, r3, 0x8000
+STR  r3, r6
+
+movt r4, 0x01000000
+subs r4, r4, 0x1
+B    -3 -- if it isn't 0
+BAL  - 17
+
+machine --
+1110 0011 0000 0000 0001 0000 0000 0000 movw
+1110 0011 0100 0011 0001 1111 0010 0000 movt
+1110 0010 1000 0001 0101 0000 0001 0000 add
+1110 0100 0001 0101 0010 0000 0000 0000 ldr
+1110 0011 1000 0010 0010 1000 0010 0000 orr
+1110 0100 0000 0101 0010 0000 0000 0000 str
+
+1110 0010 1000 0001 0110 0000 0010 0000 add
+1110 0100 0001 0110 0011 0000 0000 0000 ldr
+1110 0011 1000 0011 0011 1100 1000 0000 orr
+1110 0100 0000 0110 0011 0000 0000 0000 str
+
+1110 0011 0000 0100 0100 0000 0001 0000 movt
+1110 0010 0101 0100 0100 0000 0000 0001 subs
+0001 1010 1111 1111 1111 1111 1111 1101 BC
+
+1110 0010 1000 0001 0110 0000 0010 1100 add
+1110 0100 0001 0110 0011 0000 0000 0000 ldr
+1110 0011 1000 0011 0011 1100 1000 0000 orr
+1110 0100 0000 0110 0011 0000 0000 0000 str
+
+1110 0011 0000 0100 0100 0000 0001 0000 movt
+1110 0010 0101 0100 0100 0000 0000 0001 subs
+0001 1010 1111 1111 1111 1111 1111 1101 BC
+1110 1010 1111 1111 1111 1111 1110 1111 BAL
+
+hex --
+E3 00 10 00
+E3 43 1F 20
+E2 81 50 10
+E4 15 20 00
+E3 82 28 20
+E4 05 20 00
+
+E2 81 60 20
+E4 16 30 00
+E3 83 3C 80
+E4 06 30 00
+
+E3 40 40 10
+E2 54 40 01
+1A FF FF FD
+
+E2 81 60 2C
+E4 16 30 00
+E3 83 3C 80
+E4 06 30 00
+
+E3 40 40 10
+E2 54 40 01
+1A FF FF FD
+EA FF FF EF
+
+reverse --
+00 10 00 E3
+20 1F 43 E3
+10 50 81 E2
+00 20 15 E4
+20 28 82 E3
+00 20 05 E4
+
+20 60 81 E2
+00 30 16 E4
+80 3C 83 E3
+00 30 06 E4
+
+10 40 40 E3
+01 40 54 E2
+FD FF FF 1A
+
+2C 60 81 E2
+00 30 16 E4
+80 3C 83 E3
+00 30 06 E4
+
+10 40 40 E3
+01 40 54 E2
+FD FF FF 1A
+EF FF FF EA

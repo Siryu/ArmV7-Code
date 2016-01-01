@@ -1,0 +1,21 @@
+movw r0, 0x1000
+movt r0, 0x3F20
+movw r1, 0x0000
+
+writehi:
+movw r2, 0x0048
+str r2, r0
+BL delay:
+movw r2, 0x0069
+str r2, r0
+BL delay:
+movw r2, 0x0020
+str r2, r0
+BL delay:
+BAL writehi:
+
+delay:
+movw r4, 0x8000
+subs r4, r4, 0x1
+BNE -3
+MOV r15, r14
